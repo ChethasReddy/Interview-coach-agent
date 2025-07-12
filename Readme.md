@@ -1,6 +1,6 @@
 # Mini Interview Coach Agent
 
-An AI-powered Interview Coach that asks behavioral interview questions, analyzes your answers using a Large Language Model (LLM) powered by **Ollama (LLaMA 3)** running locally, and optionally evaluates feedback quality using **Judgment Labs' judgeval SDK**.
+An AI-powered Interview Coach that asks behavioral interview questions, analyzes your answers using a Large Language Model (LLM) powered by **Ollama (LLaMA 3)** running locally, and evaluates feedback quality using **Judgment Labs' judgeval SDK**.
 
 ---
 
@@ -100,7 +100,7 @@ python agent.py
 - The agent asks a behavioral interview question.
 - You type your answer.
 - The **LLaMA 3 model** generates actionable feedback based on STAR.
-- (Optional) The feedback is evaluated using **judgeval**.
+- The feedback is evaluated using **judgeval**.
 
 ---
 
@@ -109,7 +109,7 @@ python agent.py
 | Issue                                      | Solution                                                                                                        |
 | ------------------------------------------ | --------------------------------------------------------------------------------------------------------------- |
 | `ollama server not responding`             | Run `ollama serve` in a separate terminal.                                                                      |
-| judgeval `Project limit exceeded`          | This is a quota limit on Judgment Labs—evaluation can be commented out in code without breaking the main agent. |
+| judgeval `Project limit exceeded`          | This is a quota limit on Judgment Labs-evaluation can be commented out in code without breaking the main agent. |
 | `ModuleNotFoundError: langchain_community` | Run `pip install langchain-community`.                                                                          |
 
 ---
@@ -117,8 +117,7 @@ python agent.py
 ## 📄 Notes
 
 - The **LLM feedback** works entirely offline with **Ollama**.
-- **Judgeval** integration is optional but demonstrates real-world evaluation pipelines.
-- Costs: Using **Ollama** is free. Using **OpenAI API** (if chosen) may incur costs.
+- **Judgeval** demonstrates real-world evaluation pipelines.
 
 ---
 
@@ -135,25 +134,13 @@ Your Response:
 [Detailed STAR-based feedback provided by the agent.]
 
 🎯 Judgeval Evaluation Result:
-[Optional evaluation result or skipped if quota exceeded.]
+[evaluation result]
 ```
 
----
-
-## 📬 Submission Note
-
-If you encounter **judgeval quota limits**:
-
-> "The Judgeval evaluation step is integrated but disabled due to project quota limits. The core agent functionality and AI feedback work as expected."
-
----
-
-## 🤝 Acknowledgments
+## Acknowledgments
 
 - [Ollama](https://ollama.com)
 - [LangChain](https://python.langchain.com)
 - [Judgment Labs](https://github.com/JudgmentLabs)
 
 ---
-
-✅ You're now ready to coach yourself on interviews with AI! 🎯
