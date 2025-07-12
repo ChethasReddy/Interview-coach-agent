@@ -17,15 +17,24 @@ client = JudgmentClient()
 tracer = Tracer(project_name="interview-coach-agent", enable_monitoring=True)
 handler = JudgevalCallbackHandler(tracer)
 
-# Sample behavioral interview questions
-questions = [
-    "Tell me about a time you worked on a team project.",
-    "Describe a challenge you overcame.",
-    "Give an example of when you showed leadership."
-]
 
 
-def ask_question():
+def generate_questions(num_questions=3):
+    system_message = SystemMessage(content="""
+    You are an expert interview coach. Please generate a list of diverse behavioral interview questions that help evaluate a candidate’s experience, problem-solving, teamwork, and leadership skills. Only return a numbered list.
+    """)
+
+    user_message = HumanMessage(content=f"""
+    Generate {num_questions} behavioral interview questions.
+    """)
+
+    response = chat_model.invoke([system_message, user_message])
+    
+    lines = response.content.strip().split("\n")
+    questions = [line.split(".", 1)[1].strip() for line in lines if "." in line]
+    return questions
+
+def ask_question(questions):
     question = random.choice(questions)
     print(f"\n📝 Interview Question:\n➡️ {question}")
     return question
@@ -80,7 +89,9 @@ def evaluate_feedback(question, feedback):
 
 
 def run_agent(callbacks=None):
-    question = ask_question()
+
+    questions = generate_questions(num_questions=5)
+    question = ask_question(questions)
     user_response = input("\nYour Response:\n> ")
 
     feedback = generate_feedback_with_ollama(question, user_response)
