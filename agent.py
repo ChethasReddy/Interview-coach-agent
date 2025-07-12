@@ -5,10 +5,10 @@ from judgeval import JudgmentClient
 from judgeval.data import Example
 from judgeval.scorers import AnswerRelevancyScorer
 
-# Initialize the local model (no API key needed)
-chat_model = ChatOllama(model="llama3")  # Make sure 'ollama serve' is running in background
 
-# Initialize Judgeval client (no need for OpenAI key, only your Judgment credentials)
+chat_model = ChatOllama(model="llama3")  
+
+
 client = JudgmentClient()
 
 # Sample behavioral interview questions
@@ -18,7 +18,7 @@ questions = [
     "Give an example of when you showed leadership."
 ]
 
-# Ask a random question
+
 def ask_question():
     question = random.choice(questions)
     print(f"\n📝 Interview Question:\n➡️ {question}")
@@ -42,7 +42,7 @@ def generate_feedback_with_ollama(question, user_response):
     response = chat_model.invoke([system_message, user_message])
     return response.content
 
-# Evaluate the feedback with judgeval for quality
+# Evaluate the feedback with judgeval 
 def evaluate_feedback(question, feedback):
     example = Example(
         input=question,
@@ -57,14 +57,15 @@ def evaluate_feedback(question, feedback):
     result = client.run_evaluation(
         examples=[example],
         scorers=[scorer],
-        model="gpt-4o",  # Still required as metadata even though it's local
+        model="gpt-4o",  # Note: The actual feedback is generated using the local llama3 model via Ollama.
+                        #This model name is used purely for judgeval's metadata requirements, as judgeval does not currently accept custom/local model names.
         project_name="interview-coach-agent"
     )
 
     print("\n🎯 Judgeval Evaluation Result:")
     print(result)
 
-# Main agent function
+
 def run_agent():
     question = ask_question()
     user_response = input("\nYour Response:\n> ")
