@@ -4,12 +4,18 @@ from langchain_core.messages import HumanMessage, SystemMessage
 from judgeval import JudgmentClient
 from judgeval.data import Example
 from judgeval.scorers import AnswerRelevancyScorer
+from judgeval.common.tracer import Tracer
+from judgeval.integrations.langgraph import JudgevalCallbackHandler
+
 
 
 chat_model = ChatOllama(model="llama3")  
 
 
 client = JudgmentClient()
+
+tracer = Tracer(project_name="interview-coach-agent", enable_monitoring=True)
+handler = JudgevalCallbackHandler(tracer)
 
 # Sample behavioral interview questions
 questions = [
@@ -43,7 +49,14 @@ def generate_feedback_with_ollama(question, user_response):
     return response.content
 
 # Evaluate the feedback with judgeval 
+
 def evaluate_feedback(question, feedback):
+    # Manual checks (acting as basic rule-based evals)
+    if "STAR" not in feedback.upper():
+        print("⚠️ Feedback does not mention STAR method.")
+    if len(feedback.split()) < 50:
+        print("⚠️ Feedback is too short.")
+
     example = Example(
         input=question,
         actual_output=feedback,
@@ -66,7 +79,7 @@ def evaluate_feedback(question, feedback):
     print(result)
 
 
-def run_agent():
+def run_agent(callbacks=None):
     question = ask_question()
     user_response = input("\nYour Response:\n> ")
 
@@ -77,4 +90,20 @@ def run_agent():
     evaluate_feedback(question, feedback)
 
 if __name__ == "__main__":
-    run_agent()
+
+    run_agent(callbacks=[handler])
+
+    example = Example(
+        input={"handler": handler, "query": "Describe a challenge you overcame."},
+        expected_tools=[]  
+    )
+
+    client.assert_test(
+        scorers=[AnswerRelevancyScorer()],
+        examples=[example],
+        tracer=handler,
+        function=run_agent,
+        eval_run_name="interview_coach_demo",
+        project_name="interview-coach-agent"
+    )
+
